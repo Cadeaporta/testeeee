@@ -2,6 +2,11 @@
 -- Esta migração é para banco NOVO. Executar uma única vez, em transação.
 BEGIN;
 
+CREATE TABLE schema_migrations (
+  version text PRIMARY KEY,
+  aplicado_em timestamptz NOT NULL DEFAULT now()
+);
+
 CREATE TABLE usuarios (
   id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   login text NOT NULL UNIQUE,
@@ -154,11 +159,11 @@ CREATE INDEX devolucoes_ativo_idx ON devolucoes (ativo_id, em DESC);
 CREATE TABLE auditoria (
   id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   em timestamptz NOT NULL DEFAULT now(),
-  usuario_id bigint REFERENCES usuarios(id) ON DELETE SET NULL,
+  usuario_id bigint REFERENCES usuarios(id) ON DELETE RESTRICT,
   quem text NOT NULL,
   acao text NOT NULL,
-  ativo_id bigint REFERENCES ativos(id) ON DELETE SET NULL,
-  termo_id bigint REFERENCES termos(id) ON DELETE SET NULL,
+  ativo_id bigint REFERENCES ativos(id) ON DELETE RESTRICT,
+  termo_id bigint REFERENCES termos(id) ON DELETE RESTRICT,
   detalhe jsonb NOT NULL DEFAULT '{}'::jsonb
 );
 
@@ -182,5 +187,7 @@ INSERT INTO perfis (nome, categoria, marca, modelo, config) VALUES
   ('Latitude 5420', 'Notebook', 'Dell', 'Latitude 5420', 'Intel Core i5 · 16 GB · SSD 512 GB'),
   ('OptiPlex 3000', 'Desktop', 'Dell', 'OptiPlex 3000', 'Intel Core i5 · 8 GB · SSD 256 GB')
 ON CONFLICT (nome) DO NOTHING;
+
+INSERT INTO schema_migrations (version) VALUES ('001_schema_base');
 
 COMMIT;
