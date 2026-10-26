@@ -99,7 +99,7 @@ O endpoint de saúde deve responder `ok`. Na primeira inicialização, os logs d
 Com Caddy e DNS configurados, valide também:
 
 ```bash
-curl -fsS https://${DOMINIO}/saude
+curl -fsS https://termos.hospitalveracruz.com.br/saude
 ```
 
 ## 7. Criar o primeiro administrador
