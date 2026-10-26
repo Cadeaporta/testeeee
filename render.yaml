@@ -1,0 +1,17 @@
+# Render (plano gratuito), enquanto a VM do hospital não existe. Banco = Supabase (DATABASE_URL).
+services:
+  - type: web
+    name: termos-ti
+    runtime: node
+    plan: free
+    region: virginia
+    buildCommand: npm ci --omit=dev
+    startCommand: npm start
+    healthCheckPath: /saude
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: DATABASE_URL
+        sync: false
+      - key: CPF_CHAVE
+        sync: false

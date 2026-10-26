@@ -1,0 +1,42 @@
+# VM Linux do hospital: docker compose up -d
+# Antes, crie o arquivo .env ao lado deste (veja LEIAME.md): DOMINIO, POSTGRES_SENHA, CPF_CHAVE.
+services:
+  banco:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: termos
+      POSTGRES_USER: termos
+      POSTGRES_PASSWORD: ${POSTGRES_SENHA:?defina POSTGRES_SENHA no .env}
+    volumes:
+      - dados:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U termos"]
+      interval: 10s
+
+  app:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      banco: { condition: service_healthy }
+    environment:
+      DATABASE_URL: postgres://termos:${POSTGRES_SENHA}@banco:5432/termos
+      DB_SSL: "false"
+      CPF_CHAVE: ${CPF_CHAVE:?defina CPF_CHAVE no .env}
+      URL_PUBLICA: https://${DOMINIO}
+      ENTRA_TENANT_ID: ${ENTRA_TENANT_ID:-}
+      ENTRA_CLIENT_ID: ${ENTRA_CLIENT_ID:-}
+
+  # HTTPS automático
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports: ["80:80", "443:443"]
+    command: caddy reverse-proxy --from ${DOMINIO:?defina DOMINIO no .env} --to app:3000
+    volumes:
+      - caddy:/data
+    depends_on: [app]
+
+volumes:
+  dados:
+  caddy:
