@@ -1,0 +1,2 @@
+var t=async(s,e)=>({emscriptenOpts:e,bundlePath:new URL("./pg_textsearch.tar.gz",import.meta.url),sharedPreloadLibraries:["pg_textsearch"]}),n={name:"pg_textsearch",setup:t};export{n as pg_textsearch};
+//# sourceMappingURL=index.js.map
