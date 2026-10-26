@@ -1,56 +1,42 @@
-# Termos de TI — somente banco de dados
+# Termos de TI — pacote do banco
 
-Este branch contém apenas os arquivos necessários para reproduzir o PostgreSQL e o esquema de banco que montamos para testes. A aplicação, telas, PDFs, autenticação e deployment ficam fora deste pacote.
+Este repositório contém somente os arquivos necessários para preparar e documentar o PostgreSQL do projeto. A aplicação, frontend, PDFs, dependências Node.js e configurações de hospedagem da aplicação ficam fora do escopo.
 
-## Conteúdo
+## Arquivos mantidos
 
-- `compose.yml`: PostgreSQL 17 em Docker, com volume persistente e health check.
-- `.env.example`: modelo de variável de ambiente. Copie para `.env` e defina uma senha forte.
-- `db/migrations/001_schema_base.sql`: estrutura atual preparada para o banco `termos_ti`.
-- `*.dump` e `*.tar`: backups e imagens exportadas não devem ser commitados no Git.
+- `compose.yml`: PostgreSQL 17 com volume persistente e health check.
+- `.env.example`: modelo de variável de ambiente; não contém credenciais reais.
+- `.gitignore`: impede versionar segredos e backups.
+- `db/migrations/001_schema_base.sql`: esquema-base reconstruído a partir do dump de teste.
+- `db/migrations/002_metricas_colaborador.sql`: acrescenta métricas, hash de CPF e a view `termos_v`.
 
-## Subir o banco localmente
+## Iniciar uma instância de teste vazia
 
 ```bash
 cp .env.example .env
-# Edite .env e substitua a senha de exemplo.
+# Edite .env e configure uma senha forte.
 docker compose up -d
 docker compose ps
 ```
 
-A porta 5432 é publicada apenas em `127.0.0.1`, para permitir conexão local sem expor o banco para a rede. Para conectar uma aplicação que rode no próprio host:
+A porta 5432 é publicada somente em `127.0.0.1`. Não a exponha à rede sem necessidade e aprovação específicas.
 
-```text
-postgresql://termos_app:SENHA_DO_ENV@127.0.0.1:5432/termos_ti
-```
-
-Se a aplicação também estiver em Docker, conecte-a à mesma rede Docker e use o hostname `banco` e a porta `5432`. Não publique a porta na interface de rede externa.
-
-## Aplicar o esquema
-
-Em um banco vazio, aplique a migração uma vez:
+Para criar o esquema num banco de teste vazio, aplique os SQLs em ordem:
 
 ```bash
 docker compose exec -T banco psql -U termos_app -d termos_ti < db/migrations/001_schema_base.sql
+docker compose exec -T banco psql -U termos_app -d termos_ti < db/migrations/002_metricas_colaborador.sql
 ```
 
-Confirme as tabelas:
+Valide as tabelas e as alterações antes de usar a instância. As migrações acima são para uma base vazia; não as execute novamente em uma base já inicializada.
 
-```bash
-docker compose exec banco psql -U termos_app -d termos_ti -c '\dt'
-docker compose exec banco psql -U termos_app -d termos_ti -c 'SELECT * FROM schema_migrations;'
-```
+## Banco existente no PAINEL-TI
 
-A migração cria 11 tabelas, as restrições, índices, trigger de auditoria e três perfis iniciais. Ela é para banco novo; não execute sobre um banco que já tenha tabelas.
-
-## Sobre compatibilidade com a aplicação
-
-Este esquema representa o banco preparado no `PAINEL-TI`. **Ainda precisa ser validado e alinhado com a aplicação**: a aplicação deverá usar nomes e tipos compatíveis com estas tabelas. Não trate este branch como integração já concluída.
+Este repositório não executa comandos no servidor nem altera dados automaticamente. O esquema-base foi reconstruído do dump de teste e a migração 002 acrescenta objetos ao esquema descrito. Antes de executar qualquer SQL no banco existente, confirme o estado real de `schema_migrations`, as tabelas e as colunas. Não restaure o dump nem reaplique a migração 001 sobre uma base já criada.
 
 ## Segurança
 
-- Nunca versione `.env`, senhas, chaves de cifragem, dumps com dados reais ou arquivos `.tar` de imagem.
-- Use dados fictícios para desenvolvimento.
-- Para criar um dump de teste: `docker compose exec -T banco pg_dump -U termos_app -d termos_ti -Fc > termos_ti_teste.dump`.
-- O dump não contém a imagem Docker; a imagem é baixada pelo Compose.
-- A chave de cifragem de CPF deve ser independente por ambiente e guardada no cofre aprovado pela TI.
+- Nunca versione `.env`, senhas, chaves de cifragem, dumps com dados reais ou imagens Docker exportadas.
+- Use dados fictícios em desenvolvimento.
+- Armazene a chave de cifragem de CPF no cofre aprovado pela TI, separada dos backups.
+- Proteja os backups e teste a restauração em uma instância isolada.
