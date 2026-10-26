@@ -185,7 +185,7 @@ FOR EACH ROW EXECUTE FUNCTION auditoria_somente_inclusao();
 INSERT INTO perfis (nome, categoria, marca, modelo, config) VALUES
   ('ThinkPad L14 Padrão', 'Notebook', 'Lenovo', 'ThinkPad L14', 'Intel Core i5 · 16 GB · SSD 512 GB'),
   ('Latitude 5420', 'Notebook', 'Dell', 'Latitude 5420', 'Intel Core i5 · 16 GB · SSD 512 GB'),
-  ('OptiPlex 3000', 'Desktop', 'Dell', 'OptiPlex 3000', 'Intel Core i5 · 8 GB · SSD 256 GB')
+  ('OptiPlex 3000', 'Desktop', 'Dell', 'Dell OptiPlex 3000', 'Intel Core i5 · 8 GB · SSD 256 GB')
 ON CONFLICT (nome) DO NOTHING;
 
 INSERT INTO schema_migrations (version) VALUES ('001_schema_base');
