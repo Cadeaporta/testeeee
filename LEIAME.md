@@ -15,6 +15,9 @@ Implementação do documento **"Braga IT - Termos de TI MVP v2"**: cadastro de a
 | 8 e 9 · Celular do colaborador | Link pessoal (WhatsApp ou e-mail): confere, marca "Conferi", assina com o dedo, baixa a cópia |
 | 10 · Devolução | Mostra com quem está, condição e destino; encerra a custódia |
 | 11 · Histórico do ativo | Cada cadastro, entrega, envio, aceite e devolução com quem fez e quando |
+| Ativo · manutenção | **Enviar para manutenção** (com motivo) e **Liberar da manutenção**; ativo com alguém só sai pela devolução |
+| Ativo · correção | **Corrigir cadastro** com motivo; o histórico guarda o antes e depois. O patrimônio só muda se o ativo nunca teve termo; termos antigos mantêm os dados da época |
+| Slide 20 · Relatórios | As 4 medidas do piloto por período: tempo para localizar (medido no Início), % em uso com termo assinado, erros de digitação barrados por tipo, termos aceitos e pendentes; movimento por técnico; imprimir |
 
 **O servidor garante** (página 19 do PDF): um ativo só fica com uma pessoa por vez (regra no próprio banco); o colaborador vê só os próprios termos; perfis administrador, técnico, colaborador e leitor; a auditoria não pode ser alterada nem apagada (trava no banco); o técnico vem do login, nunca é digitado; a assinatura do técnico é gravada uma vez no perfil.
 
@@ -25,7 +28,7 @@ Implementação do documento **"Braga IT - Termos de TI MVP v2"**: cadastro de a
 - **Login Microsoft:** pendente do registro do aplicativo no Entra ID. No piloto, o colaborador assina por um **link pessoal** que vale 7 dias e só serve uma vez. O PDF registra isso como "link pessoal enviado pelo técnico", com data, hora e IP.
 - **CPF** (decisão do Jurídico pendente): o banco guarda o CPF **cifrado** (AES-256) e uma versão mascarada (`***.***.***-25`). O CPF completo só aparece dentro do PDF. Se o Jurídico decidir "só no PDF", basta apagar a coluna `cpf_cifrado` depois de gerar os PDFs.
 - **Cópia por e-mail:** no piloto o colaborador baixa a cópia na hora. O envio automático por e-mail depende de um remetente oficial do hospital.
-- **Relatórios:** ficaram de fora do MVP (estão em "Depois, a validar" no PDF).
+- **Tempo para localizar:** o sistema mede só dentro dele. Para comparar com o processo atual, cronometre algumas buscas na planilha/papel no mesmo período.
 
 ## Testar no seu computador
 
@@ -39,7 +42,7 @@ npm run dev
 
 Abra http://localhost:3002. Na primeira vez aparece no terminal o usuário `admin` com uma senha provisória.
 
-- `npm test`: roda 43 verificações do fluxo completo, num banco em memória.
+- `npm test`: roda 65 verificações do fluxo completo, num banco em memória.
 - `npm run dev -- --limpo`: começa com o banco local vazio.
 
 ## Publicar
