@@ -1,0 +1,31 @@
+services:
+  banco:
+    image: postgres:17
+    container_name: termos-ti-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: termos_ti
+      POSTGRES_USER: termos_app
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Defina POSTGRES_PASSWORD no arquivo .env}
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - termos_ti_postgres_data:/var/lib/postgresql/data
+    networks:
+      - termos-ti-interna
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U termos_app -d termos_ti"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    shm_size: 256mb
+
+volumes:
+  termos_ti_postgres_data:
+    name: termos_ti_postgres_data
+
+networks:
+  termos-ti-interna:
+    name: termos-ti-interna
+    driver: bridge
