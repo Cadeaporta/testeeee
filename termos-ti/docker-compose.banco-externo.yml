@@ -1,0 +1,28 @@
+# Variante para quando o PostgreSQL é fornecido pela TI (fora deste compose).
+#   docker compose -f docker-compose.banco-externo.yml up -d
+# .env: DOMINIO, DATABASE_URL, CPF_CHAVE (e DB_SSL=false se o banco não usa SSL na rede interna)
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: ${DATABASE_URL:?defina DATABASE_URL no .env}
+      DB_SSL: ${DB_SSL:-true}
+      CPF_CHAVE: ${CPF_CHAVE:?defina CPF_CHAVE no .env}
+      URL_PUBLICA: https://${DOMINIO}
+      ENTRA_TENANT_ID: ${ENTRA_TENANT_ID:-}
+      ENTRA_CLIENT_ID: ${ENTRA_CLIENT_ID:-}
+
+  # HTTPS automático (Let's Encrypt). Se a TI já tem proxy reverso/certificado próprio,
+  # remova este serviço e publique a porta do app: ports: ["3000:3000"]
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports: ["80:80", "443:443"]
+    command: caddy reverse-proxy --from ${DOMINIO:?defina DOMINIO no .env} --to app:3000
+    volumes:
+      - caddy:/data
+    depends_on: [app]
+
+volumes:
+  caddy:

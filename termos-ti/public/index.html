@@ -1,0 +1,787 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Termos de TI · Vera Cruz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* paleta do Hospital Vera Cruz (hospitalveracruz.com.br): azul Vera Cruz #07A4C9, azul escuro #28495B, CTA #1591B1, texto #2C4855 */
+    --bg:#f4f6f8; --card:#ffffff; --l2:#f6f9fa; --line:#dde5e9; --line2:#c3d0d7;
+    --txt:#2c4855; --body:#3a5563; --mut:#5b7280; --cinza:#8aa0ab;
+    --navy:#28495b; --navy2:#33586c; --vc:#07a4c9;
+    --acc:#0f7a96; --acc-h:#0c6680; --acc-claro:#e2f4f9; /* CTA escurecido p/ texto branco legível (4,9:1) */
+    --ok:#1f7a45; --ok-f:#e6f4ec; --warn:#8a5a00; --warn-f:#fff4dc; --err:#b42318; --err-f:#fdecea; --info:#1d4ed8; --info-f:#e8eefc;
+    --sans:'Nunito',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--txt); font:14px/1.5 var(--sans); }
+  button, input, select, textarea { font:inherit; color:inherit; }
+  button { cursor:pointer; }
+  .hide { display:none !important; }
+  :focus-visible { outline:2px solid var(--vc); outline-offset:2px; }
+
+  /* estrutura */
+  .app { display:grid; grid-template-columns:220px minmax(0,1fr); min-height:100vh; }
+  aside.menu { background:var(--navy); color:#fff; padding:18px 14px; position:sticky; top:0; height:100vh; display:flex; flex-direction:column; gap:4px; }
+  aside.menu { border-top:4px solid var(--vc); }
+  .marca { padding:2px 8px 18px; }
+  .marca small { display:block; color:#b9ccd6; font-size:11px; letter-spacing:.6px; text-transform:uppercase; }
+  .marca b { font-size:17px; font-weight:700; }
+  aside.menu a { color:#dbe7ed; text-decoration:none; padding:9px 10px; border-radius:8px; font-weight:500; }
+  aside.menu a:hover { background:var(--navy2); color:#fff; }
+  aside.menu a.on { background:var(--navy2); color:#fff; box-shadow:inset 4px 0 0 var(--vc); font-weight:700; }
+  .menu .pe { margin-top:auto; font-size:12px; color:#b9ccd6; padding:10px 8px 0; border-top:1px solid #3a5f73; }
+  .menu .pe b { display:block; color:#fff; font-size:13px; }
+  .menu .pe button { background:none; border:0; color:#8fdcf0; padding:4px 0 0; font-size:12px; }
+  main { padding:28px 32px 80px; max-width:1100px; width:100%; }
+  @media (max-width:820px) {
+    .app { grid-template-columns:minmax(0,1fr); }
+    aside.menu { position:sticky; height:auto; flex-direction:row; overflow-x:auto; padding:8px 10px; gap:2px; z-index:10; }
+    .marca, .menu .pe { display:none; }
+    aside.menu a { white-space:nowrap; padding:7px 10px; font-size:13px; }
+    main { padding:18px 16px 80px; }
+  }
+
+  h1 { font-size:22px; font-weight:700; margin:0 0 4px; color:var(--navy); }
+  h2 { font-size:15px; font-weight:600; margin:22px 0 10px; color:var(--navy); }
+  .sub { color:var(--mut); margin:0 0 18px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:18px 20px; }
+  .card + .card { margin-top:14px; }
+  .grade2 { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:4px 18px; }
+  .grade3 { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:4px 18px; }
+  @media (max-width:820px) { .grade2, .grade3 { grid-template-columns:1fr; } }
+  .lado { display:grid; grid-template-columns:minmax(0,1fr) 340px; gap:18px; align-items:start; }
+  @media (max-width:980px) { .lado { grid-template-columns:1fr; } }
+
+  /* números */
+  .numeros { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:18px; }
+  @media (max-width:820px) { .numeros { grid-template-columns:repeat(2,1fr); } }
+  .num { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px 16px; text-align:left; }
+  .num b { display:block; font-size:28px; font-weight:700; color:var(--navy); line-height:1.1; }
+  .num span { color:var(--mut); font-size:13px; }
+  .num.destaque b { color:var(--acc); }
+
+  /* formulário */
+  label.c { display:block; font-size:12.5px; color:var(--mut); margin:12px 0 5px; font-weight:500; }
+  input[type=text], input[type=password], input[type=email], input[type=date], input[type=search], select, textarea {
+    width:100%; background:#fff; border:1px solid var(--line2); border-radius:8px; padding:9px 11px; color:var(--txt);
+  }
+  input:focus, select:focus, textarea:focus { border-color:var(--acc); outline:none; box-shadow:0 0 0 3px var(--acc-claro); }
+  input.pronto, .pronto { background:var(--l2) !important; color:var(--mut) !important; border-color:var(--line) !important; }
+  input.erro { border-color:var(--err); }
+  textarea { min-height:70px; resize:vertical; }
+  .dica { font-size:12px; color:var(--mut); margin-top:4px; }
+  .dica.erro { color:var(--err); }
+  .btn { background:#fff; border:1px solid var(--line2); border-radius:8px; padding:9px 16px; font-weight:600; color:var(--navy); }
+  .btn:hover { border-color:var(--navy); }
+  .btn.pri { background:var(--acc); border-color:var(--acc); color:#fff; }
+  .btn.pri:hover { background:var(--acc-h); }
+  .btn.azul { background:var(--navy); border-color:var(--navy); color:#fff; }
+  .btn.perigo { color:var(--err); border-color:#e7b5b0; }
+  .btn.peq { padding:5px 11px; font-size:12.5px; }
+  .btn:disabled { opacity:.5; cursor:default; }
+  .acoes { display:flex; gap:10px; flex-wrap:wrap; margin-top:18px; align-items:center; }
+  .chips { display:flex; flex-wrap:wrap; gap:6px; }
+  .chips button { background:#fff; border:1px solid var(--line2); border-radius:20px; padding:6px 13px; font-size:13px; color:var(--body); }
+  .chips button.on { background:var(--navy); border-color:var(--navy); color:#fff; }
+  .msg { padding:10px 14px; border-radius:8px; margin:12px 0; font-size:13.5px; }
+  .msg.erro { background:var(--err-f); color:var(--err); }
+  .msg.ok { background:var(--ok-f); color:var(--ok); }
+  .msg.info { background:var(--info-f); color:var(--info); }
+  .msg.aviso { background:var(--warn-f); color:var(--warn); }
+
+  /* tabelas */
+  table { width:100%; border-collapse:collapse; }
+  th { text-align:left; font-size:12px; color:var(--mut); font-weight:600; padding:8px 10px; border-bottom:1px solid var(--line); }
+  td { padding:10px; border-bottom:1px solid var(--line); vertical-align:top; }
+  tr.clica { cursor:pointer; }
+  tr.clica:hover td { background:var(--l2); }
+  .tabela { overflow-x:auto; }
+  .tag { display:inline-block; font-size:12px; padding:2px 10px; border-radius:20px; font-weight:600; white-space:nowrap; }
+  .tag.em_uso, .tag.assinado { background:var(--ok-f); color:var(--ok); }
+  .tag.disponivel { background:var(--info-f); color:var(--info); }
+  .tag.manutencao, .tag.enviado, .tag.gerado { background:var(--warn-f); color:var(--warn); }
+  .tag.baixado, .tag.cancelado, .tag.encerrado { background:#eceef2; color:var(--mut); }
+  .sem { color:var(--cinza); }
+
+  /* resumo chave/valor */
+  dl.kv { display:grid; grid-template-columns:130px 1fr; gap:6px 12px; margin:0; }
+  dl.kv dt { color:var(--mut); font-size:13px; }
+  dl.kv dd { margin:0; font-weight:500; }
+  dl.kv dd.pronto { background:none !important; }
+  .bloco-t { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+  .bloco-t h2 { margin:0; }
+  .linkbtn { background:none; border:0; color:var(--acc); font-weight:600; padding:0; font-size:13px; }
+
+  .passos { list-style:none; padding:0; margin:0; }
+  .passos li { padding:7px 0 7px 26px; position:relative; color:var(--mut); }
+  .passos li::before { content:''; position:absolute; left:4px; top:12px; width:11px; height:11px; border-radius:50%; border:2px solid var(--line2); }
+  .passos li.feito { color:var(--txt); }
+  .passos li.feito::before { background:var(--ok); border-color:var(--ok); }
+  .passos li.atual { color:var(--acc); font-weight:600; }
+  .passos li.atual::before { border-color:var(--acc); }
+  .miniatura { width:100%; height:440px; border:1px solid var(--line); border-radius:10px; background:#fff; }
+  .hist { list-style:none; margin:0; padding:0; }
+  .hist li { display:grid; grid-template-columns:120px 1fr; gap:12px; padding:10px 0; border-bottom:1px solid var(--line); }
+  .hist .q { color:var(--mut); font-size:12.5px; }
+  .hist b { color:var(--navy); }
+  .quadro { width:100%; height:180px; border:1px dashed var(--line2); border-radius:10px; background:#fff; display:block; }
+  .assin-img { max-width:280px; max-height:100px; display:block; border-bottom:1px solid var(--txt); padding-bottom:4px; }
+  .codigo { font-family:ui-monospace,Consolas,monospace; font-size:12px; word-break:break-all; background:var(--l2); border:1px solid var(--line); border-radius:8px; padding:8px 10px; }
+
+  /* impressão (relatórios): só o conteúdo */
+  @media print {
+    aside.menu, .naoimprime, .acoes { display:none !important; }
+    .app { display:block; } main { padding:0; max-width:none; } body { background:#fff; }
+    .card, .num { break-inside:avoid; border-color:#bbb; }
+  }
+
+  /* login */
+  .entrada { min-height:100vh; display:grid; place-items:center; background:var(--navy); padding:20px; }
+  .entrada .card { width:100%; max-width:400px; padding:30px; }
+  .entrada small { color:var(--mut); text-transform:uppercase; letter-spacing:.6px; font-size:11px; font-weight:600; }
+  .entrada h1 { font-size:24px; margin:2px 0 6px; }
+  .btn.ms { width:100%; margin-top:14px; background:#fff; border-color:var(--line2); color:var(--txt); }
+  .ou { text-align:center; color:var(--cinza); font-size:12px; margin:16px 0 4px; }
+</style>
+</head>
+<body>
+
+<!-- login -->
+<div id="telaEntrar" class="entrada hide">
+  <form class="card" id="formEntrar" autocomplete="on">
+    <small>Vera Cruz</small>
+    <h1>Termos de TI</h1>
+    <p class="sub">Controle de equipamentos e termos de responsabilidade.</p>
+    <div id="entraBox">
+      <button type="button" class="btn ms" id="btnMs" disabled>Entrar com a conta Microsoft</button>
+      <p class="dica" id="entraDica">O login com a conta Microsoft será ligado quando o aplicativo for registrado no Entra ID. Por enquanto, use o usuário e a senha do piloto.</p>
+      <p class="ou">ou</p>
+    </div>
+    <label class="c" for="eLogin">Usuário</label>
+    <input type="text" id="eLogin" autocomplete="username" autocapitalize="none" required>
+    <label class="c" for="eSenha">Senha</label>
+    <input type="password" id="eSenha" autocomplete="current-password" required>
+    <div id="eMsg"></div>
+    <div class="acoes"><button class="btn pri" style="width:100%">Entrar</button></div>
+  </form>
+</div>
+
+<!-- troca da senha provisória -->
+<div id="telaSenha" class="entrada hide">
+  <form class="card" id="formSenha">
+    <small>Primeiro acesso</small>
+    <h1>Crie sua senha</h1>
+    <p class="sub">A senha provisória serve só para entrar a primeira vez. Use pelo menos 8 caracteres, com letras e números.</p>
+    <label class="c" for="sAtual">Senha provisória</label><input type="password" id="sAtual" autocomplete="current-password" required>
+    <label class="c" for="sNova">Nova senha</label><input type="password" id="sNova" autocomplete="new-password" required>
+    <label class="c" for="sNova2">Repita a nova senha</label><input type="password" id="sNova2" autocomplete="new-password" required>
+    <div id="sMsg"></div>
+    <div class="acoes"><button class="btn pri">Salvar senha</button><button type="button" class="btn" data-sair>Sair</button></div>
+  </form>
+</div>
+
+<div id="telaApp" class="app hide">
+  <aside class="menu">
+    <div class="marca"><small>Vera Cruz</small><b>Termos de TI</b></div>
+    <a href="#/inicio" data-m="inicio">Início</a>
+    <a href="#/ativos" data-m="ativos" data-papel="admin tecnico">Ativos</a>
+    <a href="#/entrega" data-m="entrega" data-papel="admin tecnico">Entregas</a>
+    <a href="#/devolucao" data-m="devolucao" data-papel="admin tecnico">Devoluções</a>
+    <a href="#/termos" data-m="termos">Termos</a>
+    <a href="#/relatorios" data-m="relatorios" data-papel="admin tecnico leitor">Relatórios</a>
+    <a href="#/usuarios" data-m="usuarios" data-papel="admin">Usuários</a>
+    <a href="#/perfil" data-m="perfil">Meu perfil</a>
+    <div class="pe"><b id="euNome"></b><span id="euPapel"></span><br><button data-sair>Sair</button></div>
+  </aside>
+  <main id="conteudo"></main>
+</div>
+
+<script src="/assinatura.js"></script>
+<script>
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+let token = '', EU = null, CAT = null, rascunho = null;
+try { token = sessionStorage.getItem('tt_sessao') || ''; } catch {}
+
+async function api(caminho, { json, metodo, bruto } = {}) {
+  const h = {}; if (token) h['x-sessao'] = token; if (json) h['Content-Type'] = 'application/json';
+  let r;
+  try { r = await fetch(caminho, { method: metodo || (json ? 'POST' : 'GET'), headers: h, body: json ? JSON.stringify(json) : undefined }); }
+  catch { throw new Error('Sem conexão com o servidor. Confira a internet e tente de novo.'); }
+  if (r.status === 401 && caminho !== '/api/login') { sairLocal(); throw new Error('Sua sessão terminou. Entre de novo.'); }
+  if (bruto && r.ok) return r.blob();
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) { const e = new Error(j.erro || 'Erro ' + r.status); e.status = r.status; throw e; }
+  return j;
+}
+const msg = (alvo, tipo, texto) => { alvo.innerHTML = texto ? `<div class="msg ${tipo}">${esc(texto)}</div>` : ''; };
+const pode = (...p) => EU && p.includes(EU.papel);
+
+function mascaraCpf(v) { const d = v.replace(/\D/g, '').slice(0, 11); return d.replace(/^(\d{3})(\d)/, '$1.$2').replace(/^(\d{3})\.(\d{3})(\d)/, '$1.$2.$3').replace(/\.(\d{3})(\d)/, '.$1-$2'); }
+function mascaraTel(v) { const d = v.replace(/\D/g, '').slice(0, 11); if (d.length > 10) return d.replace(/^(\d{2})(\d{5})(\d{0,4}).*/, '($1) $2-$3'); if (d.length > 6) return d.replace(/^(\d{2})(\d{4})(\d{0,4}).*/, '($1) $2-$3'); if (d.length > 2) return d.replace(/^(\d{2})(\d{0,5}).*/, '($1) $2'); return d ? '(' + d : ''; }
+function cpfValido(v) { const d = v.replace(/\D/g, ''); if (d.length !== 11 || /^(\d)\1{10}$/.test(d)) return false; const dv = (n) => { let s = 0; for (let i = 0; i < n; i++) s += +d[i] * (n + 1 - i); const r = (s * 10) % 11; return r === 10 ? 0 : r; }; return dv(9) === +d[9] && dv(10) === +d[10]; }
+
+// chips: grupo de botões (único ou vários)
+function chips(id, opcoes, { varios = false, valor = varios ? [] : null } = {}) {
+  return `<div class="chips" id="${id}" data-varios="${varios}">${opcoes.map(([v, r]) => `<button type="button" data-v="${esc(v)}" class="${(varios ? valor.includes(v) : valor === v) ? 'on' : ''}">${esc(r)}</button>`).join('')}</div>`;
+}
+document.addEventListener('click', (e) => {
+  const b = e.target.closest('.chips button'); if (!b) return;
+  const g = b.parentElement;
+  if (g.dataset.varios === 'true') b.classList.toggle('on');
+  else { g.querySelectorAll('button').forEach((x) => x.classList.toggle('on', x === b && !x.classList.contains('on'))); }
+  g.dispatchEvent(new Event('mudou'));
+});
+const lerChips = (id) => { const g = $(id); const on = [...g.querySelectorAll('button.on')].map((b) => b.dataset.v); return g.dataset.varios === 'true' ? on : on[0] || null; };
+
+// ---------- sessão ----------
+function sairLocal() { token = ''; EU = null; try { sessionStorage.removeItem('tt_sessao'); } catch {} mostrar('telaEntrar'); }
+function mostrar(id) { ['telaEntrar', 'telaSenha', 'telaApp'].forEach((t) => $(t).classList.toggle('hide', t !== id)); }
+document.addEventListener('click', async (e) => { if (e.target.closest('[data-sair]')) { try { await api('/api/sair', { json: {} }); } catch {} sairLocal(); } });
+
+$('formEntrar').addEventListener('submit', async (e) => {
+  e.preventDefault(); msg($('eMsg'));
+  try {
+    const r = await api('/api/login', { json: { login: $('eLogin').value, senha: $('eSenha').value } });
+    token = r.token; try { sessionStorage.setItem('tt_sessao', token); } catch {}
+    $('eSenha').value = ''; await iniciar();
+  } catch (err) { msg($('eMsg'), 'erro', err.message); }
+});
+$('formSenha').addEventListener('submit', async (e) => {
+  e.preventDefault(); msg($('sMsg'));
+  if ($('sNova').value !== $('sNova2').value) return msg($('sMsg'), 'erro', 'As duas senhas novas não são iguais.');
+  try { await api('/api/senha', { json: { atual: $('sAtual').value, nova: $('sNova').value } }); ['sAtual', 'sNova', 'sNova2'].forEach((i) => { $(i).value = ''; }); await iniciar(); }
+  catch (err) { msg($('sMsg'), 'erro', err.message); }
+});
+
+async function iniciar() {
+  const cfg = await api('/api/config').catch(() => ({}));
+  $('entraBox').classList.toggle('hide', false);
+  $('btnMs').disabled = !cfg.entra;
+  $('entraDica').classList.toggle('hide', !!cfg.entra);
+  if (!token) return mostrar('telaEntrar');
+  try { EU = await api('/api/eu'); } catch { return sairLocal(); }
+  if (EU.trocarSenha) return mostrar('telaSenha');
+  CAT = await api('/api/catalogo');
+  $('euNome').textContent = EU.nome; $('euPapel').textContent = EU.papelNome;
+  document.querySelectorAll('[data-papel]').forEach((a) => a.classList.toggle('hide', !a.dataset.papel.split(' ').includes(EU.papel)));
+  mostrar('telaApp');
+  if (!location.hash || location.hash === '#/') location.hash = EU.papel === 'colaborador' ? '#/termos' : '#/inicio'; else rota();
+}
+
+// ---------- rotas ----------
+const TELAS = {};
+async function rota() {
+  if (!EU) return;
+  const [nome, ...resto] = location.hash.replace(/^#\/?/, '').split('/');
+  const tela = TELAS[nome] || TELAS[EU.papel === 'colaborador' ? 'termos' : 'inicio'];
+  document.querySelectorAll('aside.menu a').forEach((a) => a.classList.toggle('on', a.dataset.m === ({ ativo: 'inicio', termo: 'termos', conferir: 'entrega' }[nome] || nome)));
+  const c = $('conteudo');
+  c.innerHTML = '<p class="sub">Carregando...</p>';
+  try { await tela(c, resto.map(decodeURIComponent)); }
+  catch (err) { c.innerHTML = `<div class="msg erro">${esc(err.message)}</div>`; }
+  window.scrollTo(0, 0);
+}
+window.addEventListener('hashchange', rota);
+
+// ---------- Início: quem está com o quê ----------
+TELAS.inicio = async (c) => {
+  if (EU.papel === 'colaborador') return TELAS.termos(c);
+  let filtro = '', busca = '';
+  c.innerHTML = `<h1>Quem está com o quê</h1><p class="sub">Situação de todos os equipamentos.</p>
+    <div class="numeros" id="nums"></div>
+    <div class="card">
+      <div class="linha" style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+        <input type="search" id="busca" placeholder="Patrimônio, equipamento, Service Tag ou pessoa" style="flex:1;min-width:220px">
+        ${chips('filtro', [['', 'Todos'], ['em_uso', 'Em uso'], ['disponivel', 'Disponível'], ['manutencao', 'Manutenção']], { valor: '' })}
+      </div>
+      <div class="tabela" id="lista" style="margin-top:12px"></div>
+    </div>`;
+  async function carregar() {
+    const r = await api(`/api/painel?q=${encodeURIComponent(busca)}&status=${filtro}`);
+    const k = r.contagem;
+    $('nums').innerHTML = `<div class="num"><b>${k.emUso}</b><span>Em uso</span></div><div class="num"><b>${k.disponiveis}</b><span>Disponíveis</span></div>
+      <div class="num"><b>${k.manutencao}</b><span>Em manutenção</span></div><a class="num destaque" href="#/termos/pendentes" style="text-decoration:none"><b>${k.aceitesPendentes}</b><span>Aceites pendentes</span></a>`;
+    $('lista').innerHTML = r.ativos.length ? `<table><tr><th>Patrimônio</th><th>Equipamento</th><th>Responsável</th><th>Status</th></tr>
+      ${r.ativos.map((a) => `<tr class="clica" data-p="${esc(a.patrimonio)}"><td><b>${esc(a.patrimonio)}</b></td><td>${esc(a.modelo)}</td>
+        <td>${a.responsavel ? esc(a.responsavel) + (a.termoStatus !== 'assinado' ? ' <span class="tag enviado">aceite pendente</span>' : '') : '<span class="sem">Sem responsável</span>'}</td>
+        <td><span class="tag ${a.status}">${esc(a.statusNome)}</span></td></tr>`).join('')}</table>`
+      : `<p class="sub" style="margin:10px 0 0">Nenhum ativo encontrado.${pode('admin', 'tecnico') ? ' <a href="#/ativos">Cadastrar ativo</a>' : ''}</p>`;
+  }
+  // medida do piloto "tempo para localizar": do 1º caractere digitado até abrir o ativo
+  let tempo, inicioBusca = 0;
+  $('busca').addEventListener('input', (e) => {
+    clearTimeout(tempo); busca = e.target.value;
+    if (!busca) inicioBusca = 0; else if (!inicioBusca) inicioBusca = performance.now();
+    tempo = setTimeout(carregar, 250);
+  });
+  $('filtro').addEventListener('mudou', () => { filtro = lerChips('filtro') || ''; carregar(); });
+  $('lista').addEventListener('click', (e) => {
+    const tr = e.target.closest('tr[data-p]'); if (!tr) return;
+    if (inicioBusca) api('/api/metricas/busca', { json: { ms: performance.now() - inicioBusca } }).catch(() => {});
+    location.hash = '#/ativo/' + encodeURIComponent(tr.dataset.p);
+  });
+  await carregar();
+};
+
+// ---------- Cadastro de ativo ----------
+TELAS.ativos = async (c) => {
+  const perfis = CAT.perfis;
+  c.innerHTML = `<h1>Cadastro de ativo</h1><p class="sub">Escolhendo o perfil pronto, só ficam três campos para digitar.</p>
+    <form class="card" id="fAtivo">
+      <label class="c">Perfil pronto</label>
+      ${chips('perfil', [...perfis.map((p) => [String(p.id), p.nome]), ['outro', 'Outro']])}
+      <div id="manual" class="hide">
+        <label class="c">Categoria</label>${chips('categoria', CAT.categorias.map((x) => [x, x]))}
+        <label class="c">Marca</label>${chips('marca', CAT.marcas.map((x) => [x, x]))}
+        <div class="grade2"><div><label class="c" for="aModelo">Modelo</label><input type="text" id="aModelo" maxlength="80" placeholder="Ex.: Dell Latitude 3420"></div>
+        <div><label class="c" for="aConfig">Configuração</label><input type="text" id="aConfig" maxlength="120" placeholder="Ex.: Intel Core i5 · 8 GB · SSD 256 GB"></div></div>
+      </div>
+      <div id="doPerfil" class="msg info hide"></div>
+      <div class="grade3">
+        <div><label class="c" for="aPat">Patrimônio</label><input type="text" id="aPat" maxlength="30" required></div>
+        <div><label class="c" for="aTag">Service Tag</label><input type="text" id="aTag" maxlength="40" required></div>
+        <div><label class="c" for="aGar">Fim da garantia</label><input type="date" id="aGar"></div>
+      </div>
+      <div id="aMsg"></div>
+      <div class="acoes"><button class="btn pri" data-depois="ver">Salvar ativo</button><button class="btn" data-depois="outro">Salvar e cadastrar outro</button></div>
+    </form>
+    <div class="card"><div class="bloco-t"><h2>Importar vários (CSV)</h2></div>
+      <p class="sub" style="margin:0 0 8px">Uma linha por ativo: <span class="codigo" style="display:inline;padding:2px 6px">patrimonio;service_tag;categoria;marca;modelo;config;garantia</span>. Garantia em AAAA-MM-DD ou DD/MM/AAAA.</p>
+      <input type="file" id="csv" accept=".csv,text/csv"><div id="cMsg"></div>
+    </div>`;
+  $('perfil').addEventListener('mudou', () => {
+    const v = lerChips('perfil'), p = perfis.find((x) => String(x.id) === v);
+    $('manual').classList.toggle('hide', v !== 'outro');
+    $('doPerfil').classList.toggle('hide', !p);
+    if (p) $('doPerfil').textContent = `Do perfil: ${p.modelo} · ${p.config} (${p.categoria}, ${p.marca})`;
+  });
+  let depois = 'ver';
+  c.querySelectorAll('[data-depois]').forEach((b) => b.addEventListener('click', () => { depois = b.dataset.depois; }));
+  $('fAtivo').addEventListener('submit', async (e) => {
+    e.preventDefault(); msg($('aMsg'));
+    const v = lerChips('perfil');
+    if (!v) return msg($('aMsg'), 'erro', 'Escolha um perfil pronto ou "Outro".');
+    const corpo = { patrimonio: $('aPat').value, serviceTag: $('aTag').value, garantia: $('aGar').value || null };
+    if (v === 'outro') Object.assign(corpo, { categoria: lerChips('categoria'), marca: lerChips('marca'), modelo: $('aModelo').value, config: $('aConfig').value });
+    else corpo.perfilId = Number(v);
+    try {
+      const r = await api('/api/ativos', { json: corpo });
+      if (depois === 'outro') { msg($('aMsg'), 'ok', `Ativo ${r.ativo.patrimonio} cadastrado. Pode digitar o próximo.`); $('aPat').value = ''; $('aTag').value = ''; $('aPat').focus(); }
+      else location.hash = '#/ativo/' + encodeURIComponent(r.ativo.patrimonio);
+    } catch (err) { msg($('aMsg'), 'erro', err.message); }
+  });
+  $('csv').addEventListener('change', async (e) => {
+    const f = e.target.files[0]; if (!f) return;
+    msg($('cMsg'), 'info', 'Importando...');
+    try {
+      const r = await api('/api/ativos/importar', { json: { csv: await f.text() } });
+      $('cMsg').innerHTML = `<div class="msg ${r.erros.length ? 'aviso' : 'ok'}">${r.cadastrados} ativo(s) cadastrado(s).${r.erros.length ? '<br>' + r.erros.map(esc).join('<br>') : ''}</div>`;
+    } catch (err) { msg($('cMsg'), 'erro', err.message); }
+    e.target.value = '';
+  });
+};
+
+// ---------- Histórico do ativo ----------
+TELAS.ativo = async (c, [pat]) => {
+  const r = await api('/api/ativos/' + encodeURIComponent(pat)), a = r.ativo;
+  c.innerHTML = `<h1>${esc(a.modelo)} · ${esc(a.patrimonio)}</h1>
+    <p class="sub">Service Tag ${esc(a.serviceTag || '-')} · garantia ${a.garantia ? 'até ' + esc(a.garantia) : 'não informada'} · <span class="tag ${a.status}">${esc(a.statusNome)}</span>${a.responsavel ? ' · ' + esc(a.responsavel) : ''}</p>
+    <div class="lado">
+      <div class="card"><h2 style="margin-top:0">Histórico</h2>
+        <ul class="hist">${r.historico.map((h) => `<li><span class="q">${esc(h.em)}</span><div><b>${esc(h.acao)}</b><br><span class="q">${esc(descreve(h))}</span></div></li>`).join('')}</ul>
+      </div>
+      <div>
+        <div class="card"><h2 style="margin-top:0">Resumo</h2>
+          <dl class="kv"><dt>Categoria</dt><dd>${esc(a.categoria)}</dd><dt>Marca</dt><dd>${esc(a.marca)}</dd><dt>Configuração</dt><dd>${esc(a.config || '-')}</dd>
+          <dt>Responsável</dt><dd>${a.responsavel ? esc(a.responsavel) : '<span class="sem">Sem responsável</span>'}</dd>${a.entregueEm ? `<dt>Entregue em</dt><dd>${esc(a.entregueEm)}</dd>` : ''}</dl>
+          ${pode('admin', 'tecnico') ? `<div class="acoes">${a.status === 'disponivel' ? `<a class="btn pri" href="#/entrega/${encodeURIComponent(a.patrimonio)}" style="text-decoration:none">Nova entrega</a>` : ''}
+            ${a.termoStatus === 'assinado' ? `<a class="btn" href="#/devolucao/${encodeURIComponent(a.patrimonio)}" style="text-decoration:none">Registrar devolução</a>` : ''}
+            ${a.status === 'manutencao' ? '<button class="btn pri" data-sit="disponivel">Liberar da manutenção</button>' : ''}
+            ${a.status === 'disponivel' ? '<button class="btn" data-sit="manutencao">Enviar para manutenção</button>' : ''}
+            <button class="btn" id="btnCorrigir">Corrigir cadastro</button></div>
+            <div id="sitBox" class="hide"><label class="c" for="sitObs" id="sitRot"></label><textarea id="sitObs" maxlength="300"></textarea>
+              <div class="acoes"><button class="btn pri" id="sitOk"></button><button class="btn" id="sitCanc">Cancelar</button></div></div>
+            <div id="aMsg2"></div>` : ''}
+        </div>
+        <form class="card hide" id="fCorr"><h2 style="margin-top:0">Corrigir cadastro</h2>
+          <p class="sub" style="margin:0 0 4px">Os termos já gerados continuam com os dados da época; a correção vale daqui para frente e fica no histórico.</p>
+          <label class="c" for="cPat">Patrimônio</label><input type="text" id="cPat" maxlength="30" value="${esc(a.patrimonio)}" ${r.termos.length ? 'readonly class="pronto" title="Não muda depois do primeiro termo"' : ''}>
+          ${r.termos.length ? '<div class="dica">Não pode mudar: este ativo já tem termo com esse número.</div>' : ''}
+          <label class="c" for="cTag">Service Tag</label><input type="text" id="cTag" maxlength="40" value="${esc(a.serviceTag || '')}">
+          <label class="c">Categoria</label>${chips('cCat', CAT.categorias.map((x) => [x, x]), { valor: a.categoria })}
+          <label class="c" for="cMarca">Marca</label><input type="text" id="cMarca" maxlength="30" value="${esc(a.marca)}">
+          <label class="c" for="cMod">Modelo</label><input type="text" id="cMod" maxlength="80" value="${esc(a.modelo)}">
+          <label class="c" for="cCfg">Configuração</label><input type="text" id="cCfg" maxlength="120" value="${esc(a.config || '')}">
+          <label class="c" for="cGar">Fim da garantia</label><input type="date" id="cGar" value="${esc(a.garantiaIso || '')}">
+          <label class="c" for="cMot">Motivo da correção</label><input type="text" id="cMot" maxlength="300" placeholder="Ex.: Service Tag digitada errada no cadastro">
+          <div id="cMsg"></div>
+          <div class="acoes"><button class="btn pri">Salvar correção</button><button type="button" class="btn" id="cCanc">Cancelar</button></div>
+        </form>
+        <div class="card"><h2 style="margin-top:0">Termos</h2>
+          ${r.termos.length ? `<table>${r.termos.map((t) => `<tr class="clica" onclick="location.hash='#/termo/${esc(t.numero)}'"><td><b>${esc(t.numero)}</b><br><span class="q sem">${esc(t.colaborador)}</span></td><td><span class="tag ${t.status}">${esc(t.statusNome)}</span></td></tr>`).join('')}</table>` : '<p class="sub" style="margin:0">Nenhum termo ainda.</p>'}
+        </div>
+      </div>
+    </div>`;
+  if (!pode('admin', 'tecnico')) return;
+  const base = '/api/ativos/' + encodeURIComponent(a.patrimonio);
+  // manutenção
+  let para = null;
+  c.querySelectorAll('[data-sit]').forEach((b) => b.addEventListener('click', () => {
+    para = b.dataset.sit;
+    $('sitRot').textContent = para === 'manutencao' ? 'Motivo da manutenção' : 'Observação (opcional): o que foi feito';
+    $('sitOk').textContent = para === 'manutencao' ? 'Confirmar envio para manutenção' : 'Confirmar: volta a ficar disponível';
+    $('sitBox').classList.remove('hide'); $('sitObs').focus();
+  }));
+  $('sitCanc').addEventListener('click', () => { $('sitBox').classList.add('hide'); msg($('aMsg2')); });
+  $('sitOk').addEventListener('click', async () => {
+    try { await api(base + '/situacao', { json: { status: para, obs: $('sitObs').value } }); await TELAS.ativo(c, [a.patrimonio]); }
+    catch (err) { msg($('aMsg2'), 'erro', err.message); }
+  });
+  // correção
+  $('btnCorrigir').addEventListener('click', () => { $('fCorr').classList.remove('hide'); $('fCorr').scrollIntoView({ behavior: 'smooth' }); });
+  $('cCanc').addEventListener('click', () => $('fCorr').classList.add('hide'));
+  $('fCorr').addEventListener('submit', async (e) => {
+    e.preventDefault(); msg($('cMsg'));
+    try {
+      const x = await api(base + '/corrigir', { json: { patrimonio: $('cPat').value, serviceTag: $('cTag').value, categoria: lerChips('cCat'), marca: $('cMarca').value, modelo: $('cMod').value, config: $('cCfg').value, garantia: $('cGar').value || null, motivo: $('cMot').value } });
+      if (x.ativo.patrimonio !== a.patrimonio) location.hash = '#/ativo/' + encodeURIComponent(x.ativo.patrimonio); else await TELAS.ativo(c, [a.patrimonio]);
+    } catch (err) { msg($('cMsg'), 'erro', err.message); }
+  });
+};
+function descreve(h) {
+  const d = h.detalhe || {};
+  if (h.acao === 'Cadastro corrigido') return `${h.quem} · ${d.motivo} · ${(d.mudancas || []).join('; ')}`;
+  if (h.acao === 'Enviado para manutenção' || h.acao === 'Liberado da manutenção') return h.quem + (d.obs ? ' · ' + d.obs : '');
+  if (h.acao === 'Entrega') return `${h.quem} para ${d.para} · ${d.numero}`;
+  if (h.acao === 'Devolução') return `${d.de} para ${h.quem} · ${String(d.condicao || '').toLowerCase()} · destino: ${String(d.destino || '').toLowerCase()}${d.obs ? ' · ' + d.obs : ''}`;
+  if (h.acao === 'Aceite do colaborador') return `${h.quem} · ${d.numero}`;
+  if (h.acao === 'Termo cancelado') return `${h.quem} · ${d.numero} · ${d.motivo}`;
+  return h.quem + (d.numero ? ' · ' + d.numero : '');
+}
+
+// ---------- Entrega: passo 1 (preencher) ----------
+TELAS.entrega = async (c, [pat]) => {
+  if (!rascunho || (pat && rascunho.patrimonio !== pat)) rascunho = { patrimonio: pat || '', acessorios: [] };
+  const R = rascunho;
+  c.innerHTML = `<h1>Nova entrega</h1><p class="sub">Passo 1 de 3 · Ao digitar o patrimônio, os dados do equipamento vêm do cadastro.</p>
+    <form class="card" id="fEnt" novalidate>
+      <div class="grade2">
+        <div><label class="c" for="ePat">Patrimônio</label><input type="text" id="ePat" value="${esc(R.patrimonio)}" maxlength="30" required><div class="dica" id="patDica"></div></div>
+        <div><label class="c" for="eEq">Equipamento · do cadastro</label><input type="text" id="eEq" class="pronto" readonly tabindex="-1"></div>
+        <div><label class="c" for="eTag">Service Tag · do cadastro</label><input type="text" id="eTag" class="pronto" readonly tabindex="-1"></div>
+        <div><label class="c" for="eCfg">Configuração · do cadastro</label><input type="text" id="eCfg" class="pronto" readonly tabindex="-1"></div>
+      </div>
+      <h2>Colaborador</h2>
+      <div class="grade2">
+        <div><label class="c" for="eNome">Nome completo</label><input type="text" id="eNome" value="${esc(R.colaborador || '')}" maxlength="80" required></div>
+        <div><label class="c" for="eSetor">Setor</label><input type="text" id="eSetor" value="${esc(R.setor || '')}" maxlength="60" required></div>
+        <div><label class="c" for="eCpf">CPF</label><input type="text" id="eCpf" inputmode="numeric" value="${esc(R.cpf || '')}" required><div class="dica" id="cpfDica"></div></div>
+        <div><label class="c" for="eTel">Telefone</label><input type="text" id="eTel" inputmode="tel" value="${esc(R.telefone || '')}" required></div>
+        <div><label class="c" for="eMat">Matrícula (opcional)</label><input type="text" id="eMat" value="${esc(R.matricula || '')}" maxlength="20"><div class="dica">Se o colaborador já foi atendido antes, o sistema o reconhece pelo CPF.</div></div>
+        <div><label class="c" for="eEmail">E-mail do hospital (opcional)</label><input type="email" id="eEmail" value="${esc(R.email || '')}" maxlength="120"><div class="dica">Usado para o colaborador ver os próprios termos e, depois, entrar com a conta Microsoft.</div></div>
+      </div>
+      <h2>Entrega</h2>
+      <div class="grade2">
+        <div><label class="c" for="eCham">Nº do chamado</label><input type="text" id="eCham" inputmode="numeric" value="${esc(R.chamado || '')}" maxlength="20" required></div>
+        <div><label class="c" for="eLocal">Local do ativo</label><input type="text" id="eLocal" value="${esc(R.local || '')}" maxlength="80" placeholder="Ex.: UTI Adulto" required></div>
+      </div>
+      <label class="c">Acessórios</label>${chips('eAce', CAT.acessorios.map((x) => [x, x]), { varios: true, valor: R.acessorios })}
+      <p class="dica" style="margin-top:14px">Preenchidos pelo sistema: técnico <b>${esc(EU.nome)}</b> e data de hoje.</p>
+      <div id="entMsg"></div>
+      <div class="acoes"><button class="btn pri">Conferir entrega</button><button type="button" class="btn" id="eCanc">Cancelar</button></div>
+    </form>`;
+  const cpf = $('eCpf'), tel = $('eTel');
+  cpf.addEventListener('input', () => { cpf.value = mascaraCpf(cpf.value); const cheio = cpf.value.replace(/\D/g, '').length === 11; cpf.classList.toggle('erro', cheio && !cpfValido(cpf.value)); $('cpfDica').textContent = cheio && !cpfValido(cpf.value) ? 'CPF inválido.' : ''; $('cpfDica').className = 'dica erro'; });
+  tel.addEventListener('input', () => { tel.value = mascaraTel(tel.value); });
+  async function buscarAtivo() {
+    const p = $('ePat').value.trim(); ['eEq', 'eTag', 'eCfg'].forEach((i) => { $(i).value = ''; });
+    $('patDica').className = 'dica'; $('patDica').textContent = '';
+    if (!p) return;
+    try {
+      const a = (await api('/api/ativos/' + encodeURIComponent(p))).ativo;
+      $('eEq').value = a.modelo; $('eTag').value = a.serviceTag || ''; $('eCfg').value = a.config || '';
+      if (a.responsavel) { $('patDica').className = 'dica erro'; $('patDica').textContent = `Está com ${a.responsavel} (${a.termoAtual}). Registre a devolução antes.`; }
+      else if (a.status !== 'disponivel') { $('patDica').className = 'dica erro'; $('patDica').textContent = `Ativo ${a.statusNome.toLowerCase()}: não pode ser entregue.`; }
+    } catch (err) { $('patDica').className = 'dica erro'; $('patDica').innerHTML = err.status === 404 ? `Não cadastrado. <a href="#/ativos">Cadastrar ativo</a>` : esc(err.message); }
+  }
+  $('ePat').addEventListener('change', buscarAtivo);
+  if (R.patrimonio) buscarAtivo();
+  $('eCanc').addEventListener('click', () => { rascunho = null; location.hash = '#/inicio'; });
+  $('fEnt').addEventListener('submit', async (e) => {
+    e.preventDefault(); msg($('entMsg'));
+    Object.assign(R, { patrimonio: $('ePat').value.trim(), matricula: $('eMat').value, colaborador: $('eNome').value, setor: $('eSetor').value, cpf: cpf.value, telefone: tel.value, email: $('eEmail').value, chamado: $('eCham').value, local: $('eLocal').value, acessorios: lerChips('eAce') });
+    try { R.conferencia = await api('/api/entregas/conferir', { json: R }); location.hash = '#/conferir'; }
+    catch (err) { msg($('entMsg'), 'erro', err.message); }
+  });
+};
+
+// ---------- Entrega: passo 2 (conferir) ----------
+TELAS.conferir = async (c) => {
+  const R = rascunho;
+  if (!R?.conferencia) { location.hash = '#/entrega'; return; }
+  const k = R.conferencia;
+  c.innerHTML = `<h1>Conferir entrega</h1><p class="sub">Passo 2 de 3 · Revise tudo antes de gerar o termo. O que vem do patrimônio aparece em cinza.</p>
+    <div class="grade2" style="gap:14px">
+      <div class="card"><div class="bloco-t"><h2>Colaborador</h2><button class="linkbtn" data-ed>Editar</button></div>
+        ${k.colaboradorCadastrado ? `<div class="msg info" style="margin-top:0">Já cadastrado como <b>${esc(k.colaboradorCadastrado.nome)}</b>${k.colaboradorCadastrado.matricula ? ' (matrícula ' + esc(k.colaboradorCadastrado.matricula) + ')' : ''}. Os dados abaixo atualizam o cadastro.</div>` : '<div class="msg info" style="margin-top:0">Colaborador novo: o cadastro será criado junto com o termo.</div>'}
+        <dl class="kv"><dt>Nome</dt><dd>${esc(k.colaborador.nome)}</dd><dt>Matrícula</dt><dd>${esc(k.colaborador.matricula || '-')}</dd><dt>CPF</dt><dd>${esc(k.colaborador.cpf)}</dd><dt>Setor</dt><dd>${esc(k.colaborador.setor)}</dd>
+        <dt>Telefone</dt><dd>${esc(k.colaborador.telefone)}</dd><dt>E-mail</dt><dd>${esc(k.colaborador.email || '-')}</dd></dl></div>
+      <div class="card"><div class="bloco-t"><h2>Equipamento · do cadastro</h2></div>
+        <dl class="kv" style="color:var(--mut)"><dt>Modelo</dt><dd>${esc(k.ativo.modelo)}</dd><dt>Patrimônio</dt><dd>${esc(k.ativo.patrimonio)}</dd>
+        <dt>Service Tag</dt><dd>${esc(k.ativo.serviceTag || '-')}</dd><dt>Config.</dt><dd>${esc(k.ativo.config || '-')}</dd></dl></div>
+      <div class="card"><div class="bloco-t"><h2>Entrega</h2><button class="linkbtn" data-ed>Editar</button></div>
+        <dl class="kv"><dt>Local</dt><dd>${esc(k.entrega.local)}</dd><dt>Chamado</dt><dd>${esc(k.entrega.chamado)}</dd>
+        <dt>Acessórios</dt><dd>${esc(k.entrega.acessorios.join(', ') || 'Sem acessórios')}</dd><dt>Data</dt><dd>${esc(k.entrega.data)}</dd></dl></div>
+      <div class="card"><div class="bloco-t"><h2>Assinatura do técnico</h2></div>
+        ${k.temAssinaturaTecnico ? `<p style="margin:0">${esc(k.tecnico.nome)} · <span class="sem">aplicada do perfil</span></p>`
+          : `<div class="msg aviso" style="margin:0">Você ainda não gravou sua assinatura. <a href="#/perfil">Gravar agora</a> (uma vez só) e volte para esta tela.</div>`}</div>
+    </div>
+    <div id="cMsg"></div>
+    <div class="acoes"><button class="btn" data-ed>Voltar e editar</button><button class="btn pri" id="gerar" ${k.temAssinaturaTecnico ? '' : 'disabled'}>Confirmar e gerar termo</button></div>`;
+  c.querySelectorAll('[data-ed]').forEach((b) => b.addEventListener('click', () => { location.hash = '#/entrega'; }));
+  $('gerar').addEventListener('click', async () => {
+    $('gerar').disabled = true; msg($('cMsg'), 'info', 'Gerando o termo...');
+    try { const r = await api('/api/entregas', { json: R }); rascunho = null; location.hash = '#/termo/' + r.termo.numero; }
+    catch (err) { msg($('cMsg'), 'erro', err.message); $('gerar').disabled = false; }
+  });
+};
+
+// ---------- Termo (gerado / enviado / assinado) ----------
+let urlPdf = null;
+TELAS.termo = async (c, [num]) => {
+  const t = (await api('/api/termos/' + encodeURIComponent(num))).termo;
+  const passo = { gerado: 3, enviado: 4, assinado: 5, encerrado: 5, cancelado: 0 }[t.status];
+  const li = (n, txt) => `<li class="${passo > n ? 'feito' : passo === n ? 'atual' : ''}">${txt}</li>`;
+  c.innerHTML = `<h1>Termo ${esc(t.numero)}${t.status === 'gerado' ? ' gerado' : ''}</h1>
+    <p class="sub">${t.status === 'gerado' ? `Próximo passo: enviar para a assinatura de ${esc(t.colaborador)}.` : `<span class="tag ${t.status}">${esc(t.statusNome)}</span>`}</p>
+    <div class="lado">
+      <div>
+        <div class="card"><dl class="kv"><dt>Colaborador</dt><dd>${esc(t.colaborador)}${t.matricula ? ' · matrícula ' + esc(t.matricula) : ''}</dd><dt>Equipamento</dt><dd>${esc(t.equipamento)}</dd>
+          <dt>Patrimônio</dt><dd><a href="#/ativo/${encodeURIComponent(t.patrimonio)}">${esc(t.patrimonio)}</a></dd><dt>Local do ativo</dt><dd>${esc(t.local)}</dd>
+          <dt>Acessórios</dt><dd>${esc(t.acessorios.join(', ') || 'Sem acessórios')}</dd><dt>Técnico</dt><dd>${esc(t.tecnico)}</dd><dt>Gerado em</dt><dd>${esc(t.criadoEm)}</dd>
+          ${t.assinadoEm ? `<dt>Aceite</dt><dd>${esc(t.aceiteNome)}, ${esc(t.assinadoEm)}</dd>` : ''}
+          ${t.encerradoEm ? `<dt>Devolvido em</dt><dd>${esc(t.encerradoEm)}</dd>` : ''}
+          ${t.canceladoMotivo ? `<dt>Cancelado</dt><dd>${esc(t.canceladoMotivo)}</dd>` : ''}</dl></div>
+        ${t.status !== 'cancelado' ? `<div class="card"><h2 style="margin-top:0">Andamento</h2><ol class="passos">
+          ${li(0, 'Entrega conferida')}${li(1, 'Termo gerado')}${li(3, 'Enviar para assinatura')}${li(4, 'Assinatura do colaborador')}${t.status === 'encerrado' ? '<li class="feito">Devolução registrada</li>' : ''}</ol></div>` : ''}
+        <div id="envio"></div>
+        <div class="card"><h2 style="margin-top:0">Autenticidade</h2><p class="dica" style="margin:0 0 4px">Hash SHA-256 do termo</p><div class="codigo">${esc(t.hash)}</div>
+          ${t.pdfHash ? `<p class="dica" style="margin:10px 0 4px">Hash SHA-256 do PDF assinado</p><div class="codigo">${esc(t.pdfHash)}</div>` : ''}</div>
+        <div id="tMsg"></div>
+        <div class="acoes">
+          ${pode('admin', 'tecnico') && ['gerado', 'enviado'].includes(t.status) ? `<button class="btn pri" id="enviar">${t.status === 'gerado' ? 'Enviar para assinatura' : 'Gerar novo link'}</button><button class="btn" id="aqui">Assinar neste aparelho</button>` : ''}
+          <button class="btn azul" id="baixar">Baixar PDF</button>
+          ${pode('admin', 'tecnico') && ['gerado', 'enviado'].includes(t.status) ? `<button class="btn perigo" id="cancelar">Cancelar termo</button>` : ''}
+        </div>
+      </div>
+      <div><iframe class="miniatura" id="mini" title="Termo ${esc(t.numero)}"></iframe><p class="dica">Clique em Baixar PDF para abrir em tamanho cheio.</p></div>
+    </div>`;
+  if (urlPdf) URL.revokeObjectURL(urlPdf);
+  urlPdf = URL.createObjectURL(await api(`/api/termos/${t.numero}/pdf`, { bruto: true }));
+  $('mini').src = urlPdf + '#toolbar=0&view=FitH';
+  $('baixar').addEventListener('click', () => { const a = document.createElement('a'); a.href = urlPdf; a.download = t.numero + '.pdf'; a.click(); });
+  const enviar = async () => {
+    const r = await api(`/api/termos/${t.numero}/enviar`, { json: {} });
+    $('envio').innerHTML = `<div class="card"><h2 style="margin-top:0">Link de assinatura</h2>
+      <p class="sub" style="margin:0 0 8px">Mande para ${esc(t.colaborador)} pelo WhatsApp ou e-mail. Vale até ${esc(r.expira)}. Cada link novo invalida o anterior.</p>
+      <div class="codigo" id="lnk">${esc(r.link)}</div>
+      <div class="acoes"><button class="btn" id="copiar">Copiar mensagem</button><a class="btn" style="text-decoration:none" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(r.whatsapp)}">Abrir no WhatsApp</a></div></div>`;
+    $('copiar').addEventListener('click', async () => { try { await navigator.clipboard.writeText(r.whatsapp); $('copiar').textContent = 'Copiado'; } catch { $('copiar').textContent = 'Selecione e copie o link'; } });
+    return r;
+  };
+  if ($('enviar')) $('enviar').addEventListener('click', async () => {
+    try { await enviar(); $('enviar').textContent = 'Gerar novo link'; } catch (err) { msg($('tMsg'), 'erro', err.message); }
+  });
+  if ($('aqui')) $('aqui').addEventListener('click', async () => {
+    try { const r = await enviar(); window.open(r.link, '_blank', 'noopener'); msg($('tMsg'), 'info', 'A assinatura abriu em outra aba. Depois do aceite, atualize esta página.'); }
+    catch (err) { msg($('tMsg'), 'erro', err.message); }
+  });
+  if ($('cancelar')) $('cancelar').addEventListener('click', async () => {
+    const motivo = prompt('Motivo do cancelamento (o ativo volta a ficar disponível):'); if (!motivo) return;
+    try { await api(`/api/termos/${t.numero}/cancelar`, { json: { motivo } }); rota(); } catch (err) { msg($('tMsg'), 'erro', err.message); }
+  });
+};
+
+// ---------- Lista de termos ----------
+TELAS.termos = async (c, [filtroIni]) => {
+  const colab = EU.papel === 'colaborador';
+  let st = filtroIni === 'pendentes' ? 'enviado' : '';
+  c.innerHTML = `<h1>${colab ? 'Meus termos' : 'Termos'}</h1><p class="sub">${colab ? 'Termos de equipamentos em seu nome.' : 'Todos os termos gerados.'}</p>
+    <div class="card">${colab ? '' : chips('fst', [['', 'Todos'], ['gerado', 'Gerados'], ['enviado', 'Aguardando assinatura'], ['assinado', 'Assinados'], ['encerrado', 'Encerrados'], ['cancelado', 'Cancelados']], { valor: st })}
+    <div class="tabela" id="tl" style="margin-top:12px"></div></div>`;
+  async function carregar() {
+    let l = (await api('/api/termos' + (st ? '?status=' + st : ''))).termos;
+    if (filtroIni === 'pendentes' && !st) l = l.filter((x) => ['gerado', 'enviado'].includes(x.status));
+    $('tl').innerHTML = l.length ? `<table><tr><th>Número</th><th>Colaborador</th><th>Equipamento</th><th>Gerado em</th><th>Status</th></tr>
+      ${l.map((t) => `<tr ${colab ? '' : `class="clica" data-n="${esc(t.numero)}"`}><td><b>${esc(t.numero)}</b></td><td>${esc(t.colaborador)}</td><td>${esc(t.equipamento)} · ${esc(t.patrimonio)}</td><td>${esc(t.criadoEm)}</td><td><span class="tag ${t.status}">${esc(t.statusNome)}</span></td></tr>`).join('')}</table>`
+      : '<p class="sub" style="margin:0">Nenhum termo.</p>';
+  }
+  if (!colab) $('fst').addEventListener('mudou', () => { st = lerChips('fst') || ''; filtroIni = null; carregar(); });
+  $('tl').addEventListener('click', (e) => { const tr = e.target.closest('tr[data-n]'); if (tr) location.hash = '#/termo/' + tr.dataset.n; });
+  await carregar();
+};
+
+// ---------- Devolução ----------
+TELAS.devolucao = async (c, [pat]) => {
+  c.innerHTML = `<h1>Nova devolução</h1><p class="sub">O sistema mostra quem está com o equipamento e encerra a responsabilidade.</p>
+    <form class="card" id="fDev">
+      <div class="grade2">
+        <div><label class="c" for="dPat">Patrimônio</label><input type="text" id="dPat" value="${esc(pat || '')}" maxlength="30" required></div>
+        <div><label class="c" for="dRec">Recebido por · do login</label><input type="text" id="dRec" class="pronto" value="${esc(EU.nome)}" readonly tabindex="-1"></div>
+      </div>
+      <div id="dQuem"></div>
+      <label class="c">Condição do equipamento</label>${chips('dCond', Object.entries(CAT.condicoes))}
+      <label class="c">Destino do equipamento</label>${chips('dDest', Object.entries(CAT.destinos))}
+      <label class="c" for="dObs">Observação <span id="obsReq">(opcional)</span></label><textarea id="dObs" maxlength="500"></textarea>
+      <div id="dMsg"></div>
+      <div class="acoes"><button class="btn pri" id="dOk" disabled>Registrar devolução</button><button type="button" class="btn" onclick="location.hash='#/inicio'">Cancelar</button></div>
+    </form>`;
+  async function consultar() {
+    $('dOk').disabled = true; $('dQuem').innerHTML = '';
+    const p = $('dPat').value.trim(); if (!p) return;
+    try {
+      const r = await api('/api/devolucoes/consultar/' + encodeURIComponent(p)), t = r.termo;
+      $('dQuem').innerHTML = `<div class="msg info"><b>${esc(t.equipamento)}</b> está com <b>${esc(t.colaborador)}</b><br>Entregue em ${esc(r.entregueEm)} · Termo ${esc(t.numero)}${t.status !== 'assinado' ? '<br><b>O colaborador ainda não assinou.</b> Se a entrega não aconteceu, <a href="#/termo/' + esc(t.numero) + '">cancele o termo</a>.' : ''}</div>`;
+      $('dOk').disabled = t.status !== 'assinado';
+    } catch (err) { msg($('dQuem'), 'erro', err.message); }
+  }
+  $('dPat').addEventListener('change', consultar);
+  $('dCond').addEventListener('mudou', () => { $('obsReq').textContent = (lerChips('dCond') || 'sem_avarias') === 'sem_avarias' ? '(opcional)' : '(descreva o problema)'; });
+  if (pat) consultar();
+  $('fDev').addEventListener('submit', async (e) => {
+    e.preventDefault(); msg($('dMsg'));
+    try {
+      const r = await api('/api/devolucoes', { json: { patrimonio: $('dPat').value, condicao: lerChips('dCond'), destino: lerChips('dDest'), obs: $('dObs').value } });
+      location.hash = '#/ativo/' + encodeURIComponent($('dPat').value.trim().toUpperCase());
+      setTimeout(() => { const s = document.querySelector('#conteudo .sub'); if (s) s.insertAdjacentHTML('beforebegin', `<div class="msg ok">Devolução registrada. Termo ${esc(r.numero)} encerrado; equipamento ${esc(r.destino.toLowerCase())}.</div>`); }, 400);
+    } catch (err) { msg($('dMsg'), 'erro', err.message); }
+  });
+};
+
+// ---------- Relatórios: as quatro medidas do piloto (slide 20) ----------
+TELAS.relatorios = async (c, [de0, ate0]) => {
+  const hoje = new Date().toLocaleDateString('en-CA');
+  c.innerHTML = `<h1>Relatórios do piloto</h1><p class="sub">As quatro medidas da apresentação, no período escolhido.</p>
+    <div class="card naoimprime"><div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">
+      <div><label class="c" for="rDe">De</label><input type="date" id="rDe" max="${hoje}"></div>
+      <div><label class="c" for="rAte">Até</label><input type="date" id="rAte" max="${hoje}"></div>
+      <button class="btn pri" id="rVer">Ver</button><button class="btn" id="rImp">Imprimir</button></div></div>
+    <div id="rel"></div>`;
+  async function carregar(de, ate) {
+    const r = await api(`/api/relatorio?de=${de || ''}&ate=${ate || ''}`);
+    $('rDe').value = r.periodo.de; $('rAte').value = r.periodo.ate;
+    const L = r.localizar, R = r.responsavel, E = r.erros, A = r.aceites, M = r.movimento;
+    const br = (d) => d.split('-').reverse().join('/');
+    const n = (v, suf = '') => (v == null ? '<span class="sem">sem dados</span>' : esc(String(v).replace('.', ',')) + suf);
+    $('rel').innerHTML = `<p class="sub" style="margin-top:14px">Período: <b>${br(r.periodo.de)} a ${br(r.periodo.ate)}</b></p>
+      <div class="numeros">
+        <div class="num"><b>${n(L.medianaSeg, ' s')}</b><span>Tempo para localizar (mediana de ${L.buscas} busca${L.buscas === 1 ? '' : 's'})</span></div>
+        <div class="num"><b>${n(R.percentual, '%')}</b><span>Em uso com responsável identificado (${R.comTermoAssinado} de ${R.emUso}, hoje)</span></div>
+        <div class="num"><b>${E.total}</b><span>Erros de digitação barrados</span></div>
+        <div class="num destaque"><b>${n(A.percentual, '%')}</b><span>Termos aceitos (${A.assinados} de ${A.gerados})</span></div>
+      </div>
+      <div class="grade2" style="gap:14px">
+        <div class="card"><h2 style="margin-top:0">Tempo para localizar</h2>
+          <p class="sub" style="margin:0 0 8px">Medido no Início: do primeiro caractere da busca até abrir o ativo.</p>
+          <dl class="kv"><dt>Buscas medidas</dt><dd>${L.buscas}</dd><dt>Mediana</dt><dd>${n(L.medianaSeg, ' s')}</dd><dt>9 em cada 10 até</dt><dd>${n(L.p90Seg, ' s')}</dd></dl>
+          <p class="dica">Para comparar, cronometre algumas buscas no processo atual (planilha ou papel) no mesmo período.</p></div>
+        <div class="card"><h2 style="margin-top:0">Responsável identificado</h2>
+          <p class="sub" style="margin:0 0 8px">Situação de hoje: ativo em uso cujo termo foi assinado pelo colaborador.</p>
+          <dl class="kv"><dt>Ativos cadastrados</dt><dd>${R.ativos}</dd><dt>Em uso</dt><dd>${R.emUso}</dd><dt>Com termo assinado</dt><dd>${R.comTermoAssinado}</dd><dt>Aceite pendente</dt><dd>${R.aceitePendente}</dd></dl></div>
+        <div class="card"><h2 style="margin-top:0">Erros de digitação evitados</h2>
+          <p class="sub" style="margin:0 0 8px">Cada dado errado que o sistema recusou antes de virar termo ou cadastro.</p>
+          ${E.porTipo.length ? `<table>${E.porTipo.map((e) => `<tr><td>${esc(e.tipo)}</td><td style="text-align:right"><b>${e.n}</b></td></tr>`).join('')}</table>` : '<p class="sub" style="margin:0">Nenhum no período.</p>'}</div>
+        <div class="card"><h2 style="margin-top:0">Termos aceitos</h2>
+          <dl class="kv"><dt>Gerados</dt><dd>${A.gerados}</dd><dt>Assinados</dt><dd>${A.assinados}</dd><dt>Cancelados</dt><dd>${A.cancelados}</dd><dt>Tempo até o aceite</dt><dd>${A.medianaMin == null ? n(null) : (A.medianaMin < 60 ? A.medianaMin + ' min' : String(Math.round(A.medianaMin / 6) / 10).replace('.', ',') + ' h') + ' (mediana)'}</dd></dl></div>
+      </div>
+      <div class="card"><h2 style="margin-top:0">Aceites pendentes agora</h2>
+        ${A.pendentes.length ? `<div class="tabela"><table><tr><th>Termo</th><th>Colaborador</th><th>Patrimônio</th><th>Situação</th><th>Desde</th></tr>
+          ${A.pendentes.map((p) => `<tr class="clica" data-n="${esc(p.numero)}"><td><b>${esc(p.numero)}</b></td><td>${esc(p.colaborador)}</td><td>${esc(p.patrimonio)}</td><td>${esc(p.statusNome)}</td>
+            <td>${esc(p.desde)}${p.dias >= 2 ? ` <span class="tag enviado">${p.dias} dias</span>` : ''}</td></tr>`).join('')}</table></div>` : '<p class="sub" style="margin:0">Nenhum. Todos os termos foram assinados.</p>'}</div>
+      <div class="card"><h2 style="margin-top:0">Movimento no período</h2>
+        <dl class="kv" style="margin-bottom:12px"><dt>Ativos cadastrados</dt><dd>${M.cadastros}</dd><dt>Devoluções</dt><dd>${M.devolucoes}</dd><dt>Cadastros corrigidos</dt><dd>${M.correcoes}</dd></dl>
+        ${M.porTecnico.length ? `<table><tr><th>Técnico</th><th style="text-align:right">Entregas</th><th style="text-align:right">Assinadas</th></tr>
+          ${M.porTecnico.map((t) => `<tr><td>${esc(t.tecnico)}</td><td style="text-align:right">${t.entregas}</td><td style="text-align:right">${t.assinados}</td></tr>`).join('')}</table>` : '<p class="sub" style="margin:0">Nenhuma entrega no período.</p>'}</div>`;
+    $('rel').querySelectorAll('tr[data-n]').forEach((tr) => tr.addEventListener('click', () => { location.hash = '#/termo/' + tr.dataset.n; }));
+  }
+  $('rVer').addEventListener('click', () => carregar($('rDe').value, $('rAte').value).catch((err) => msg($('rel'), 'erro', err.message)));
+  $('rImp').addEventListener('click', () => window.print());
+  await carregar(de0, ate0);
+};
+
+// ---------- Meu perfil ----------
+TELAS.perfil = async (c) => {
+  const tecnico = pode('admin', 'tecnico');
+  c.innerHTML = `<h1>Meu perfil</h1><p class="sub">${esc(EU.nome)} · ${esc(EU.papelNome)} · usuário ${esc(EU.login)}</p>
+    ${tecnico ? `<div class="card"><h2 style="margin-top:0">Assinatura do técnico</h2>
+      <p class="sub" style="margin:0 0 10px">Gravada uma vez e aplicada automaticamente em todo termo. Você não assina de novo a cada entrega.</p>
+      <div id="atual"></div>
+      <canvas class="quadro" id="quadro"></canvas>
+      <div id="pMsg"></div>
+      <div class="acoes"><button class="btn pri" id="gravar">Gravar assinatura</button><button class="btn" id="limpar">Limpar</button></div></div>` : ''}
+    <div class="card"><h2 style="margin-top:0">Trocar senha</h2>
+      <div class="grade3"><div><label class="c" for="pA">Senha atual</label><input type="password" id="pA" autocomplete="current-password"></div>
+      <div><label class="c" for="pN">Nova senha</label><input type="password" id="pN" autocomplete="new-password"></div>
+      <div><label class="c" for="pN2">Repita</label><input type="password" id="pN2" autocomplete="new-password"></div></div>
+      <div id="sMsg2"></div><div class="acoes"><button class="btn" id="trocar">Trocar senha</button></div></div>`;
+  if (tecnico) {
+    const q = quadroAssinatura($('quadro'));
+    const mostrarAtual = async () => {
+      try { const b = await api('/api/eu/assinatura', { bruto: true }); $('atual').innerHTML = `<p class="dica">Assinatura atual:</p><img class="assin-img" alt="Sua assinatura" src="${URL.createObjectURL(b)}"><p class="dica" style="margin-top:14px">Para trocar, desenhe a nova abaixo:</p>`; }
+      catch { $('atual').innerHTML = '<div class="msg aviso">Você ainda não tem assinatura gravada. Desenhe no quadro abaixo.</div>'; }
+    };
+    mostrarAtual();
+    $('limpar').addEventListener('click', () => q.limpar());
+    $('gravar').addEventListener('click', async () => {
+      if (q.vazio()) return msg($('pMsg'), 'erro', 'Desenhe sua assinatura no quadro.');
+      try { await api('/api/eu/assinatura', { json: { assinatura: q.png() } }); EU.temAssinatura = true; q.limpar(); msg($('pMsg'), 'ok', 'Assinatura gravada.'); mostrarAtual(); if (rascunho?.conferencia) rascunho.conferencia.temAssinaturaTecnico = true; }
+      catch (err) { msg($('pMsg'), 'erro', err.message); }
+    });
+  }
+  $('trocar').addEventListener('click', async () => {
+    if ($('pN').value !== $('pN2').value) return msg($('sMsg2'), 'erro', 'As duas senhas novas não são iguais.');
+    try { await api('/api/senha', { json: { atual: $('pA').value, nova: $('pN').value } }); msg($('sMsg2'), 'ok', 'Senha trocada.'); ['pA', 'pN', 'pN2'].forEach((i) => { $(i).value = ''; }); }
+    catch (err) { msg($('sMsg2'), 'erro', err.message); }
+  });
+};
+
+// ---------- Usuários (administrador) ----------
+TELAS.usuarios = async (c) => {
+  const r = await api('/api/usuarios');
+  c.innerHTML = `<h1>Usuários</h1><p class="sub">Perfis: administrador, técnico, colaborador e leitor. A senha provisória aparece uma vez só.</p>
+    <form class="card" id="fU"><h2 style="margin-top:0">Novo usuário</h2>
+      <div class="grade3"><div><label class="c" for="uNome">Nome</label><input type="text" id="uNome" maxlength="80" required></div>
+      <div><label class="c" for="uLogin">Usuário (login)</label><input type="text" id="uLogin" maxlength="30" placeholder="nome.sobrenome" autocapitalize="none" required></div>
+      <div><label class="c" for="uEmail">E-mail do hospital</label><input type="email" id="uEmail" maxlength="120"></div></div>
+      <label class="c">Perfil</label>${chips('uPapel', Object.entries(r.papeis), { valor: 'tecnico' })}
+      <div id="uMsg"></div><div class="acoes"><button class="btn pri">Criar usuário</button></div></form>
+    <div class="card tabela"><table><tr><th>Nome</th><th>Usuário</th><th>Perfil</th><th>Situação</th><th></th></tr>
+      ${r.usuarios.map((u) => `<tr><td>${esc(u.nome)}<br><span class="sem">${esc(u.email || '')}</span></td><td>${esc(u.login)}</td><td>${esc(u.papelNome)}${u.papel !== 'colaborador' && u.papel !== 'leitor' ? (u.temAssinatura ? '' : ' <span class="tag enviado">sem assinatura</span>') : ''}</td>
+        <td>${u.ativo ? (u.trocarSenha ? '<span class="tag enviado">senha provisória</span>' : '<span class="tag em_uso">Ativo</span>') : '<span class="tag cancelado">Desativado</span>'}</td>
+        <td style="white-space:nowrap">${u.id === EU.id ? '' : `<button class="btn peq" data-u="${u.id}" data-a="redefinir-senha">Nova senha</button> <button class="btn peq ${u.ativo ? 'perigo' : ''}" data-u="${u.id}" data-a="ativo" data-v="${u.ativo ? '' : '1'}">${u.ativo ? 'Desativar' : 'Reativar'}</button>`}</td></tr>`).join('')}</table></div>`;
+  $('fU').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    try {
+      const x = await api('/api/usuarios', { json: { nome: $('uNome').value, login: $('uLogin').value, email: $('uEmail').value, papel: lerChips('uPapel') } });
+      await TELAS.usuarios(c);
+      msg($('uMsg'), 'ok', `Usuário ${x.usuario.login} criado. Senha provisória: ${x.senha} (anote agora; ela não aparece de novo).`);
+    } catch (err) { msg($('uMsg'), 'erro', err.message); }
+  });
+  c.querySelectorAll('[data-u]').forEach((b) => b.addEventListener('click', async () => {
+    try {
+      const x = await api('/api/usuarios/' + b.dataset.u, { json: { acao: b.dataset.a, valor: !!b.dataset.v } });
+      await TELAS.usuarios(c);
+      if (x.senha) msg($('uMsg'), 'ok', `Nova senha provisória: ${x.senha} (anote agora).`);
+    } catch (err) { alert(err.message); }
+  }));
+};
+
+iniciar();
+</script>
+</body>
+</html>
